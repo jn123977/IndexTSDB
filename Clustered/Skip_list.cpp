@@ -22,13 +22,13 @@ skip_list *skip_list_init(int tableId) {
     srand((unsigned) time(NULL));   //每次运行都会产生一个随机数序列
     skip_list *sl;
     sl = new skip_list();
-    tableMap.insert(pair<int, skip_list *>(tableId,sl));    //把skip list放进map中
+    tableMap.insert(pair<int, skip_list *>(tableId, sl));    //把skip list放进map中
     sl->tID = tableId;
     sl->max_level = 0;
     sl->header = new data_node *[MAX_LEVEL];
     for (int i = 0; i < MAX_LEVEL; ++i) {   //定义跳表中每层的头节点
         data_node *t = new data_node();
-        t->key = -10;
+        t->key = "-10";
         t->right = NULL;
         sl->header[i] = t;
     }
@@ -44,19 +44,19 @@ skip_list *skip_list_init(int tableId) {
  * @param x 查找的值
  * @return  data_note *
  */
-data_node *find_x_from_skip_list(skip_list *sl, int x) {
+data_node *find_x_from_skip_list(skip_list *sl, char *x) {
     data_node *h = sl->header[sl->max_level];     //最高层的头结点
     while (h) {
-        if (h->key == x && h->down == NULL) {
+        if (strcmp(h->key, x) == 0 && h->down == NULL) {
             return h;
         } else {
-            if (x >= h->key && (h->right == NULL || h->right->key > x)) {
+            if (strcmp(h->key, x) <= 0 && (h->right == NULL || strcmp(h->right->key, x) > 0)) {
                 h = h->down;
 #ifdef DEBUG
                 cout<<"d-";
 #endif
             } else {
-                if (x < h->key) {
+                if (strcmp(h->key, x) > 0) {
 #ifdef DEBUG
                     cout<<"return imediately"<<endl;
 #endif
@@ -82,15 +82,15 @@ data_node *find_x_from_skip_list(skip_list *sl, int x) {
  * @param x
  * @return
  */
-data_node *insert_x_into_list(node *head, int x, char * data) {
+data_node *insert_x_into_list(node *head, char *x, char *data) {
 
     node *prev = NULL;         //上一个节点
-    while (head && x > head->key) {   //判断所要插入到节点在当前层中的那个位置
+    while (head && strcmp(x, head->key) > 0) {   //判断所要插入到节点在当前层中的那个位置
         prev = head;
         head = head->right;
     }
 
-    if (prev != NULL && prev->right != NULL && prev->right->key == x) {   //判断当前层中是否有这个节点的值
+    if (prev != NULL && prev->right != NULL && strcmp(prev->right->key, x) == 0) {   //判断当前层中是否有这个节点的值
         prev->right->list.push_back(data);
         return prev->right;
     }
@@ -120,7 +120,7 @@ data_node *insert_x_into_list(node *head, int x, char * data) {
  * @param x
  * @return
  */
-int insert_x_into_skip_list(skip_list *sl, int x, char *data) {
+int insert_x_into_skip_list(skip_list *sl, char *x, char *data) {
     int current_level = get_current_level();    //获得一个随机层
     if (current_level > sl->max_level) {    //获得的随机层大于当前跳表中的最大 就把最大层数跟新
         sl->max_level = current_level;
@@ -150,11 +150,11 @@ int insert_x_into_skip_list(skip_list *sl, int x, char *data) {
  * @param x
  * @return
  */
-int remove_data_from_list(node *head, int x) {
+int remove_data_from_list(node *head, char *x) {
     node *prev = NULL;
     node *cur = head;
     while (cur) {
-        if (cur->key == x) {
+        if (strcmp(cur->key, x) == 0) {
             if (prev) {
                 prev->right = cur->right;
                 delete cur;
@@ -179,9 +179,9 @@ int remove_data_from_list(node *head, int x) {
  * @param x
  * @return
  */
-int remove_x_from_skip_list(skip_list *sl, int key) {
+int remove_x_from_skip_list(skip_list *sl, char *x) {
     for (int i = 0; i <= sl->max_level; ++i) {
-        remove_data_from_list(sl->header[i], key);
+        remove_data_from_list(sl->header[i], x);
     }
     return 0;
 }
@@ -217,14 +217,14 @@ void put_CharList(CHARLIST list) {
 }
 
 /**
- * 从map中查找调表
+ * 从map中查找跳表
  * @param dataID
  * @return
  */
 skip_list *all_data(int dataID) {
     map<int, skip_list *>::iterator iter;
-    iter= tableMap.find(dataID);
-    if(iter!=tableMap.end())
+    iter = tableMap.find(dataID);
+    if (iter != tableMap.end())
         return iter->second;
     return NULL;
 }

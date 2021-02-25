@@ -11,6 +11,7 @@
 #include <time.h>
 #include <list>
 #include <map>
+#include <string.h>
 
 #define MAX_LEVEL 30
 
@@ -20,7 +21,7 @@ typedef list<char *> CHARLIST;
 typedef struct node {
     node *right;  //后驱
     node *down;   //下驱
-    int key;       //Key  timestame
+    char * key;       //Key  timestame
     CHARLIST list;  //Value 数据容器
 } data_node;
 
@@ -40,17 +41,17 @@ int get_current_level();
 skip_list *skip_list_init(int tableId);
 
 //查找值
-data_node *find_x_from_skip_list(skip_list *sl, int x);
+data_node *find_x_from_skip_list(skip_list *sl, char * x);
 
 //把数据插入到跳表中
-data_node *insert_x_into_list(node *head, int x, char *data);
+data_node *insert_x_into_list(node *head, char * x, char *data);
 
-int insert_x_into_skip_list(skip_list *sl, int x, char *data);
+int insert_x_into_skip_list(skip_list *sl, char * x, char *data);
 
 //删除调表的数据
-int remove_data_from_list(node *head, int x);
+int remove_data_from_list(node *head, char * x);
 
-int remove_x_from_skip_list(skip_list *sl, int key);
+int remove_x_from_skip_list(skip_list *sl, char * key);
 
 //输出调表
 int print_list(skip_list *sl);
@@ -60,5 +61,6 @@ void put_CharList(CHARLIST list);
 
 //返回数据给源语
 skip_list *all_data(int dataID);
+
 
 #endif //TEST_SKIP_LIST_H
